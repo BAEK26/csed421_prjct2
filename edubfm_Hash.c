@@ -158,11 +158,20 @@ Four edubfm_LookUp(
     Two                 i, j;                   /* indices */
     Two                 hashValue;
 
-
+    
     CHECKKEY(key);    /*@ check validity of key */
+    hashValue = BFM_HASH(key,type);
 
+    Two* hashtable = BI_HASHTABLE(type);
+    Two element =  BI_HASHTABLEENTRY(type,hashValue);
+    
+    while( TRUE ){ 
+        if (EQUALKEY(key, &BI_KEY(type, element))) break;
+        else element = BI_NEXTHASHENTRY(type, element);
+    }
 
-
+    if (element) return element; // 마지막 element의 next hashy entry는 NULL
+    else
     return(NOTFOUND_IN_HTABLE);
     
 }  /* edubfm_LookUp */

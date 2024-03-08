@@ -86,9 +86,29 @@ Four EduBfM_GetTrain(
     // look up hashtable to see if the train is in the bufpool    
     // Two hash_key_value = BFM_HASH( trainId, type );
 
-    index = edubfm_LookUp(trainId, type);
+    index = edubfm_LookUp(trainId, type); // index on buffer table entry holding the train specified by 'key'
     
-    //
+    // not found in bufpool
+    if (index == NOTFOUND_IN_HTABLE){
+        // allocate new buf element
+        index = edubfm_AllocTrain(type); // An index of a new buffer from the buffer pool
+
+            // write page/train innto buffer element // edubfm_AllocTrain() 에서.
+
+        // buftable update
+
+        // Insert index to hasTable
+        e = edubfm_Insert(trainId, index, type); // return value is error code // TODO (myself)key? 첫번째 인자..
+        if( e == eBADBUFINDEX_BFM) ERR(e); 
+
+        //set retBuf BufferInfo[index] ?
+    }
+    // found
+    else{
+        // buf element update
+        //set retBuf BufferInfo[index] ?
+
+    }
 
 
 
