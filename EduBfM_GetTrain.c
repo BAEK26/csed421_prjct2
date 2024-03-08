@@ -83,6 +83,14 @@ Four EduBfM_GetTrain(
     /* Is the buffer type valid? */
     if(IS_BAD_BUFFERTYPE(type)) ERR(eBADBUFFERTYPE_BFM);	
 
+    // look up hashtable to see if the train is in the bufpool    
+    // Two hash_key_value = BFM_HASH( trainId, type );
+
+    index = edubfm_LookUp(trainId, type);
+    
+    //
+
+
 
 
     return(eNOERROR);   /* No error */
