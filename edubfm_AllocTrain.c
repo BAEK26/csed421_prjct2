@@ -79,6 +79,40 @@ Four edubfm_AllocTrain(
 	/* Error check whether using not supported functionality by EduBfM */
 	if(sm_cfgParams.useBulkFlush) ERR(eNOTSUPPORTED_EDUBFM);
 
+    // char *bufpoolptr = BI_BUFFERPOOL(type);
+    UTwo candidate_idx = BI_NEXTVICTIM(type);
+    char* candidate =  BI_BUFFER(type, candidate_idx);
+    One candidate_bits =  BI_BITS(type, candidate_idx);
+    // One    	bits;		/* bit 1 : DIRTY(0b01), bit 2 : VALID(0b10), bit 3 : REFER(0b11), bit 4 : NEW(0b100) */
+    for (i = 0; i < BI_NBUFS(type); i ++){ // TODO BI_NBUFS 타입 Two 
+        candidate_idx = BI_NEXTVICTIM(type);
+        BI_NEXTVICTIM(type) += 1;
+        BI_NEXTVICTIM(type) %= BI_NBUFS(type);
+        
+        if (BI_FIXED(type, candidate_idx))
+            continue;
+
+        if(BI_BITS(type, candidate_idx) & VALID){ // new?
+            victim = candidate_idx;
+        }
+        else if(BI_BITS(type, candidate_idx) & REFER){
+            BI_BITS(type, candidate_idx) &= ~REFER;
+        }
+    }
+
+    // flush and do hash reordering
+    PageID * pid = &BI_KEY(type, victim);
+    if ( !IS_NILBFMHASHKEY( *((BfMHashKey*)pid) ) ) {
+        e = bfm_FlushTrain(pid, type); // TODO to implement edubfm_FlushTrain
+        if ( e < 0 ) ERR( e );
+        e = bfm_Delete(pid, type); // TODO to implement edubfm_Delete
+        if ( e < 0 ) ERR( e );
+    }
+
+
+
+
+
 
     
     return( victim );

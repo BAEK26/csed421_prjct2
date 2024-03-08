@@ -166,13 +166,18 @@ Four edubfm_LookUp(
     Two element =  BI_HASHTABLEENTRY(type,hashValue);
     
     while( TRUE ){ 
-        if (EQUALKEY(key, &BI_KEY(type, element))) break;
-        else element = BI_NEXTHASHENTRY(type, element);
+        if (element == -1){
+            break;
+        }
+        else{
+            if (EQUALKEY(key, &BI_KEY(type, element))) break;
+            else element = BI_NEXTHASHENTRY(type, element);
+        }
     }
 
-    if (element) return element; // 마지막 element의 next hashy entry는 NULL
-    else
-    return(NOTFOUND_IN_HTABLE);
+    if (element == -1) return(NOTFOUND_IN_HTABLE);
+    else return element; // 마지막 element의 next hashy entry는 -1
+    
     
 }  /* edubfm_LookUp */
 
